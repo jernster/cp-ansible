@@ -1,8 +1,13 @@
+---
 # JVM Installation and Repo Setup
-- import_tasks: redhat.yml
+- include_tasks: redhat.yml
   when: ansible_os_family == "RedHat"
+
+- import_tasks: ubuntu.yml
+  when: ansible_distribution == "Ubuntu"
+
 - import_tasks: debian.yml
-  when: ansible_os_family == "Debian"
+  when: ansible_distribution == "Debian"
 
 - name: Disable Require TTY in Sudoers (required for ansible synchronize)
   lineinfile:
@@ -19,8 +24,9 @@
 
 - name: Download Jolokia Jar
   get_url:
-    url: "http://search.maven.org/remotecontent?filepath=org/jolokia/jolokia-jvm/{{jolokia_version}}/jolokia-jvm-{{jolokia_version}}-agent.jar"
+    url: "{{jolokia_jar_url}}"
     dest: "{{ jolokia_jar_path }}"
+    mode: 0755
   when: jolokia_enabled|bool
 
 - name: Create Prometheus install directory
@@ -32,6 +38,7 @@
 
 - name: Download Prometheus JMX Exporter Jar
   get_url:
-    url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar
+    url: "{{ jmxexporter_jar_url }}"
     dest: "{{ jmxexporter_jar_path }}"
+    mode: 0755
   when: jmxexporter_enabled|bool
