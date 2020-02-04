@@ -1,17 +1,7 @@
 ---
 - name: Delete SSL Certificate Directory
   file:
-    path: /var/ssl/private/generation
-    state: absent
-
-- name: Delete Old Keystore
-  file:
-    path: "{{keystore_path}}"
-    state: absent
-
-- name: Delete Old Truststore
-  file:
-    path: "{{truststore_path}}"
+    path: /var/ssl/private
     state: absent
 
 - name: Create SSL Certificate Generation Directory
@@ -28,7 +18,7 @@
   include_tasks: custom_certs.yml
   when: ssl_custom_certs|bool
 
-- name: Copy Provided Keystore and Truststore to Host
+- name: Copy Keystore and Truststore to Host
   include_tasks: provided_keystore_and_truststore.yml
   when: ssl_provided_keystore_and_truststore|bool
 
